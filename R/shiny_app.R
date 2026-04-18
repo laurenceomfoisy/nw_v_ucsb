@@ -6,10 +6,6 @@ weight_input_id <- function(criterion_id) {
   paste0("weight__", criterion_id)
 }
 
-subjective_answered_input_id <- function(criterion_id) {
-  paste0("subjective_answered__", criterion_id)
-}
-
 subjective_score_input_id <- function(school, criterion_id) {
   paste0("subjective_score__", school_key(school), "__", criterion_id)
 }
@@ -53,9 +49,63 @@ weight_completion <- function(weights) {
 format_score_source <- function(origin) {
   ifelse(
     origin == "camille_required",
-    "Camille",
+    "Survey",
     ifelse(origin == "research_baseline", "Research baseline", ifelse(origin == "legacy_manual", "Legacy", "Missing"))
   )
+}
+
+criterion_plain_explanation <- function(row) {
+  custom <- c(
+    advisor_depth = "In plain English: if the first-choice adviser is unavailable or turns out to be a bad fit, are there several other professors who could step in? A high score means Camille would still have good adviser options.",
+    advisor_fit_best = "This is about the single strongest adviser match in the department. A high score means there is at least one professor who feels like an unusually good fit for Camille's work.",
+    advisor_fit_second = "This asks whether there is a strong second option behind the best adviser. A high score means the choice does not depend on one person only.",
+    advisor_personality = "This is not about research fit alone. It asks whether likely advisers seem constructive, humane, and manageable to work with over many years.",
+    mentoring_reputation = "This asks what kind of mentor faculty are known to be in practice, not just how impressive they are on paper.",
+    intellectual_community = "This means the everyday intellectual atmosphere: seminars, conversations, workshops, and whether Camille would feel surrounded by stimulating people.",
+    methods_training = "This is about whether the program can teach the methods Camille actually needs for her research, whether quantitative, qualitative, formal, historical, or mixed.",
+    labor_vs_training_balance = "This asks whether the PhD feels like serious scholarly training or mostly like the department using graduate students as labor.",
+    teaching_load_sustainability = "This is about whether the teaching obligations are manageable enough that Camille can still make progress on her own research and stay healthy.",
+    financial_stress_risk = "This rolls up whether money would be a chronic source of anxiety. A high score means finances are likely to feel stable enough to focus on the PhD.",
+    general_stress_culture = "This is the overall pressure level of the place. A high score means the day-to-day atmosphere seems sustainable rather than constantly intense.",
+    anxiety_fit = "This asks specifically whether the environment is likely to help or hurt Camille's anxiety. A high score means it seems emotionally protective rather than destabilizing.",
+    workaholism_sustainability = "This asks whether the program is likely to calm Camille's unhealthy work habits or make them worse. A high score means the culture is less likely to feed overwork.",
+    overall_emotional_sustainability = "This is the big picture mental-health question: can Camille realistically imagine lasting there for five to seven years without burning out?",
+    cohort_collegiality = "This means whether fellow graduate students seem supportive and decent to one another, rather than cutthroat or isolating.",
+    intimidation_vs_support = "This asks whether the people and atmosphere feel encouraging or intimidating. A high score means Camille would more often feel supported than intimidated.",
+    toxic_competitiveness_risk = "This asks whether the culture seems driven by unhealthy status games. A high score means that kind of toxicity looks less likely.",
+    placement_strength = "This means the real job outcomes of recent students. A high score means the program tends to place students well in the kinds of jobs Camille would want.",
+    niche_reputation = "This is not overall prestige. It means reputation specifically among scholars in Camille's exact research area.",
+    letter_writer_strength = "This asks whether faculty there are likely to be credible, influential letter writers for the job market.",
+    external_network_access = "This means access to workshops, conferences, and outside scholars who could matter for Camille's future career.",
+    career_optionality = "This asks whether the training would keep doors open both inside and outside academia.",
+    overall_livability = "This is the everyday life test: could Camille actually imagine living there in a stable, human way beyond just academic prestige?",
+    known_vs_unknown = "This asks how much of the decision is based on real information rather than projection. A high score means Camille knows what she is getting into.",
+    reliance_on_single_professor = "This asks whether the whole choice depends too much on one professor. A high score means the option is safer because it does not collapse if one person leaves or disappoints.",
+    confidence_against_regret = "This asks whether Camille is likely to feel at peace with the choice later, rather than replaying the decision with regret.",
+    late_offer_process_confidence = "This is about whether the admissions process itself inspires trust. A high score means the way the offer happened feels orderly and reassuring.",
+    switching_cost_acceptance_status = "This asks how hard it would be to change course now that UCSB has already been accepted. A high score means switching would be easy; a low score means it would be messy or costly.",
+    decision_reversibility = "This asks how easy it would be to recover if the choice turns out wrong. A high score means there is more room to pivot or repair the decision later."
+  )
+
+  if (row$criterion_id %in% names(custom)) {
+    return(custom[[row$criterion_id]])
+  }
+
+  sprintf("In plain English: %s A higher score means this looks better for Camille.", row$description)
+}
+
+criterion_weight_guidance <- function(row) {
+  category_help <- c(
+    academic_fit = "Give this a high weight if it could strongly affect dissertation quality, advising, or the core intellectual fit of the PhD.",
+    funding_material = "Give this a high weight if it could strongly affect financial security, housing, or whether daily life feels materially stable.",
+    environment_mental_health = "Give this a high weight if it could strongly affect anxiety, burnout risk, or whether Camille can stay healthy through the PhD.",
+    department_culture = "Give this a high weight if day-to-day treatment, support, or intimidation would heavily shape whether the program is sustainable.",
+    career_outcomes = "Give this a high weight if long-run academic reputation, placement, and career opportunities should dominate the choice.",
+    personal_life = "Give this a high weight if ordinary life outside work will strongly influence whether Camille can do good academic work.",
+    decision_risk = "Give this a high weight if uncertainty, regret, or dependence on fragile assumptions should carry a lot of influence in the final choice."
+  )
+
+  category_help[[row$category]]
 }
 
 subjective_card_ui <- function(row, options) {
@@ -78,14 +128,16 @@ subjective_card_ui <- function(row, options) {
     tags$h3(row$label),
     tags$p(class = "question-copy", row$description),
     div(
+      class = "help-box",
+      tags$strong("What this means"),
+      tags$p(criterion_plain_explanation(row)),
+      tags$strong("How to think about it"),
+      tags$p("Higher scores mean the program looks better for Camille on this dimension. The sliders below already start from a suggested value so she does not have to begin from scratch.")
+    ),
+    div(
       class = "context-box",
       tags$strong("Context already built into the tool"),
       tags$ul(lapply(context_bits, tags$li))
-    ),
-    checkboxInput(
-      inputId = subjective_answered_input_id(row$criterion_id),
-      label = "I have answered this question for both schools",
-      value = isTRUE(ucsb_row$camille_answered)
     ),
     fluidRow(
       column(
@@ -136,7 +188,7 @@ subjective_card_ui <- function(row, options) {
       value = if (nzchar(ucsb_row$user_note)) ucsb_row$user_note else "",
       rows = 2,
       width = "100%",
-      placeholder = "Short note about why these two scores feel right"
+      placeholder = "Short note about why these suggested scores feel right or should be changed"
     )
   )
 }
@@ -146,6 +198,13 @@ weight_card_ui <- function(row, weight) {
     class = "survey-card compact-card",
     tags$h3(row$label),
     tags$p(class = "question-copy", row$description),
+    div(
+      class = "help-box",
+      tags$strong("What this means"),
+      tags$p(criterion_plain_explanation(row)),
+      tags$strong("How to set the weight"),
+      tags$p(criterion_weight_guidance(row))
+    ),
     sliderInput(
       inputId = weight_input_id(row$criterion_id),
       label = "How important is this in Camille's overall decision?",
@@ -289,6 +348,16 @@ build_decision_survey_app <- function(root) {
           background: #eef4ff;
           color: #2a456a;
         }
+        .help-box {
+          margin-bottom: 14px;
+          padding: 12px 14px;
+          border-radius: 14px;
+          background: #f4f7fb;
+          color: #30435f;
+        }
+        .help-box p {
+          margin: 6px 0 10px;
+        }
         .context-box ul {
           margin: 8px 0 0;
           padding-left: 18px;
@@ -391,7 +460,7 @@ build_decision_survey_app <- function(root) {
       div(
         class = "hero",
         tags$h1("Camille PhD Decision Survey"),
-        tags$p("This is a simple four-step survey. Objective criteria are already pre-scored inside the tool. Camille only has to score the subjective questions herself, then answer the importance survey, then read the final results sheet.")
+        tags$p("This is a simple four-step survey. Objective criteria are already pre-scored inside the tool. Subjective criteria are prefilled with suggested starting values so Camille can simply review and adjust them, then answer the importance survey, then read the final results sheet.")
       ),
       uiOutput("progress_ui"),
       uiOutput("step_ui")
@@ -431,16 +500,13 @@ build_decision_survey_app <- function(root) {
 
       for (i in seq_len(nrow(subjective_rows))) {
         criterion_id <- subjective_rows$criterion_id[i]
-        answered <- input[[subjective_answered_input_id(criterion_id)]]
         ucsb_score <- input[[subjective_score_input_id("UCSB", criterion_id)]]
         nw_score <- input[[subjective_score_input_id("Northwestern", criterion_id)]]
         confidence <- input[[subjective_confidence_input_id(criterion_id)]]
         note <- input[[subjective_note_input_id(criterion_id)]]
 
         rows <- options$criterion_id == criterion_id
-        if (!is.null(answered)) {
-          options$camille_answered[rows] <- isTRUE(answered)
-        }
+        options$camille_answered[rows] <- TRUE
         if (!is.null(note)) {
           options$user_note[rows] <- note
         }
@@ -449,9 +515,6 @@ build_decision_survey_app <- function(root) {
           options$user_score[options$school == "UCSB" & rows] <- ucsb_score
           options$user_score[options$school == "Northwestern" & rows] <- nw_score
           options$user_confidence[rows] <- confidence
-        } else {
-          options$user_score[rows] <- NA_real_
-          options$user_confidence[rows] <- NA_real_
         }
       }
 
@@ -484,14 +547,6 @@ build_decision_survey_app <- function(root) {
       invisible(state)
     }
 
-    missing_subjective_labels <- reactive({
-      state <- current_state()
-      subjective <- state$criteria[state$criteria$score_owner == "camille_required", c("criterion_id", "label"), drop = FALSE]
-      answered_rows <- state$options[state$options$school == "UCSB", c("criterion_id", "camille_answered"), drop = FALSE]
-      merged <- merge(subjective, answered_rows, by = "criterion_id", all.x = TRUE, sort = FALSE)
-      merged$label[!merged$camille_answered]
-    })
-
     output$progress_ui <- renderUI({
       labels <- c("1. Intro", "2. Subjective Scores", "3. Importance Survey", "4. Results")
       div(
@@ -514,10 +569,10 @@ build_decision_survey_app <- function(root) {
         div(
           class = "section-shell",
           tags$h2("How this survey works"),
-          tags$p(class = "section-intro", "The tool already contains baseline scores for objective criteria like stipend level, housing affordability, and prestige. Camille only needs to answer the subjective questions herself, then say how important each criterion is overall."),
-          div(class = "status-pill", sprintf("Subjective questions answered so far: %s / %s", completion$answered, completion$total)),
+          tags$p(class = "section-intro", "The tool already contains baseline scores for objective criteria like stipend level, housing affordability, and prestige. The subjective section is also prefilled with suggested starting values, so Camille only has to tweak them if they feel wrong and then answer how important each criterion is overall."),
+          div(class = "status-pill", sprintf("Prefilled subjective questions ready to review: %s / %s", completion$answered, completion$total)),
           tags$ul(
-            tags$li("Step 2 asks Camille to rate both schools on the criteria that depend on her own feelings or judgment."),
+            tags$li("Step 2 shows the subjective criteria with suggested starting scores for both schools. Camille can leave them as-is or edit them."),
             tags$li("Step 3 asks how important each criterion is in the overall decision. A weight of 0 means it should not matter."),
             tags$li("Step 4 shows one detailed results sheet with the final recommendation, category breakdown, top drivers, and criterion-level details.")
           ),
@@ -533,8 +588,8 @@ build_decision_survey_app <- function(root) {
         div(
           class = "section-shell",
           tags$h2("Subjective scores"),
-          tags$p(class = "section-intro", "For each question, Camille should score both schools herself. These are the criteria where the tool should not pretend to know the answer objectively."),
-          div(class = "status-pill", sprintf("Completed: %s / %s subjective questions", completion$answered, completion$total)),
+          tags$p(class = "section-intro", "These are the criteria where the tool should not pretend to know the full answer objectively. Every card already starts from a suggested score, so Camille can just review and adjust where needed."),
+          div(class = "status-pill", sprintf("Prefilled subjective questions ready to review: %s / %s", completion$answered, completion$total)),
           lapply(unique(subjective_rows$category), function(category) {
             rows <- subjective_rows[subjective_rows$category == category, , drop = FALSE]
             tagList(
@@ -579,7 +634,7 @@ build_decision_survey_app <- function(root) {
         div(
           class = "section-shell",
           tags$h2("Results sheet"),
-          tags$p(class = "section-intro", "This sheet combines objective baseline scores, Camille's required subjective answers, and the weights from the importance survey."),
+          tags$p(class = "section-intro", "This sheet combines objective baseline scores, the survey's prefilled or edited subjective scores, and the weights from the importance survey."),
           div(class = "status-pill", sprintf("Criteria with non-zero weight: %s / %s", completion$nonzero, completion$total)),
           if (all(is.na(overall$overall_score))) {
             tags$p("There is still not enough overlapping data to compute a final comparison." )
@@ -659,15 +714,6 @@ build_decision_survey_app <- function(root) {
     })
 
     observeEvent(input$next_to_weights, {
-      missing_labels <- missing_subjective_labels()
-      if (length(missing_labels) > 0) {
-        showNotification(
-          sprintf("Please answer all subjective questions before continuing. Remaining: %s", paste(head(missing_labels, 4), collapse = ", ")),
-          type = "error",
-          duration = 7
-        )
-        return()
-      }
       save_current_state()
       step(3)
     })

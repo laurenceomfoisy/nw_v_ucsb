@@ -7,7 +7,7 @@ Survey-style R software to help Camille compare Northwestern and UCSB across a l
 - Seeds an extensive criteria library covering academic fit funding mental health department culture career outcomes personal life and decision risk.
 - Stores school-specific research baseline scores, notes, and seeded facts.
 - Uses a simple linear survey flow instead of multiple dashboards.
-- Requires Camille to answer the more subjective criteria herself before they count in the comparison.
+- Prefills the more subjective criteria with suggested starting values so Camille can review them quickly instead of starting from blank sliders.
 - Lets Camille set weights through a dedicated importance survey.
 - Tracks confidence for uncertain judgments.
 - Flags low-scoring dealbreakers.
@@ -45,7 +45,7 @@ R -e "shiny::runApp()"
 Then follow the steps in the app:
 
 - Step 1: short intro explaining the survey.
-- Step 2: Camille answers the subjective criteria herself.
+- Step 2: Camille reviews the prefilled subjective criteria and adjusts anything that feels wrong.
 - Step 3: Camille answers the importance survey to create the weights.
 - Step 4: the app shows one detailed results sheet.
 
@@ -76,8 +76,8 @@ Rscript cli.R review-criteria academic_fit
 - Each criterion gets a weight.
 - Each school now has a research baseline score from `0` to `10` when one is available.
 - Each baseline score gets a confidence from `0` to `1`.
-- Subjective criteria do not count until Camille explicitly marks them as answered and gives her own score.
-- The comparison uses Camille's score on required subjective criteria and the research baseline on research-heavy criteria.
+- Subjective criteria are prefilled in the survey with editable starting values.
+- The comparison uses the survey score on subjective criteria and the research baseline on research-heavy criteria.
 - The importance survey creates the weights for the final calculation.
 - The tool applies a small uncertainty penalty to low-confidence scores.
 - Comparison only uses criteria scored for both schools so the result stays fair.
@@ -91,7 +91,7 @@ Rscript cli.R review-criteria academic_fit
 ## Suggested workflow
 
 1. Run `Rscript run_app.R`.
-2. Complete the subjective-score section.
+2. Review the prefilled subjective-score section and adjust anything that feels wrong.
 3. Complete the importance survey.
 4. Read the final results sheet.
 5. Download the markdown report if wanted.

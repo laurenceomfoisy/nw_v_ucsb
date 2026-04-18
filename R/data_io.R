@@ -26,6 +26,50 @@ augment_criteria <- function(criteria) {
   criteria
 }
 
+neutral_baseline_note <- function() {
+  "No criterion-specific evidence was loaded for this item yet, so the tool uses a neutral placeholder score to stay usable out of the box. This should be improved with more detailed research later."
+}
+
+seed_missing_baselines <- function(options, criteria) {
+  criteria <- augment_criteria(criteria)
+  idx <- match(options$criterion_id, criteria$criterion_id)
+  options$score_owner <- criteria$score_owner[idx]
+
+  missing_baseline <- is.na(options$baseline_score)
+  options$baseline_score[missing_baseline] <- 5
+  options$baseline_confidence[missing_baseline] <- 0.25
+  options$baseline_note[missing_baseline & !nzchar(options$baseline_note)] <- neutral_baseline_note()
+  options$baseline_source[missing_baseline & !nzchar(options$baseline_source)] <- "neutral_placeholder"
+  options
+}
+
+seed_subjective_starting_scores <- function(options, criteria) {
+  criteria <- augment_criteria(criteria)
+  idx <- match(options$criterion_id, criteria$criterion_id)
+  score_owner <- criteria$score_owner[idx]
+  subjective_rows <- score_owner == "camille_required"
+  needs_seed <- subjective_rows & is.na(options$user_score)
+
+  options$camille_answered[needs_seed] <- TRUE
+  options$user_score[needs_seed] <- options$baseline_score[needs_seed]
+  options$user_confidence[needs_seed] <- ifelse(
+    is.na(options$baseline_confidence[needs_seed]),
+    0.55,
+    pmax(0.45, pmin(0.85, options$baseline_confidence[needs_seed]))
+  )
+  options$user_note[needs_seed & !nzchar(options$user_note)] <- paste(
+    "Prefilled starting value from the tool.",
+    "Camille can keep it or change it if it feels off."
+  )
+  options
+}
+
+apply_starting_scores <- function(options, criteria) {
+  options <- seed_missing_baselines(options, criteria)
+  options <- seed_subjective_starting_scores(options, criteria)
+  options
+}
+
 paths_for <- function(root) {
   list(
     criteria = file.path(root, "data", "criteria.csv"),
@@ -208,6 +252,7 @@ default_options <- function(criteria, schools = default_schools()) {
   template$baseline_confidence[has_seed] <- seeds$baseline_confidence[idx[has_seed]]
   template$baseline_note[has_seed] <- seeds$baseline_note[idx[has_seed]]
   template$baseline_source[has_seed] <- seeds$baseline_source[idx[has_seed]]
+  template <- apply_starting_scores(template, criteria)
   resolve_option_scores(template, criteria)
 }
 
@@ -398,6 +443,7 @@ sync_options <- function(options, criteria, schools = default_schools()) {
   source_target <- synced$source[has_match]
   synced$source[has_match] <- ifelse(nzchar(existing_source), existing_source, source_target)
 
+  synced <- apply_starting_scores(synced, criteria)
   resolve_option_scores(synced, criteria)
 }
 

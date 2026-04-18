@@ -21,15 +21,15 @@ write_report <- function(root, output_path, state = NULL) {
   names(northwestern) <- c("criterion_id", "northwestern_score", "northwestern_source")
   detail_rows <- merge(detail_rows, ucsb, by = "criterion_id", all.x = TRUE, sort = FALSE)
   detail_rows <- merge(detail_rows, northwestern, by = "criterion_id", all.x = TRUE, sort = FALSE)
-  detail_rows$ucsb_source <- ifelse(detail_rows$ucsb_source == "camille_required", "Camille", ifelse(detail_rows$ucsb_source == "research_baseline", "Research baseline", "Missing"))
-  detail_rows$northwestern_source <- ifelse(detail_rows$northwestern_source == "camille_required", "Camille", ifelse(detail_rows$northwestern_source == "research_baseline", "Research baseline", "Missing"))
+  detail_rows$ucsb_source <- ifelse(detail_rows$ucsb_source == "camille_required", "Survey", ifelse(detail_rows$ucsb_source == "research_baseline", "Research baseline", "Missing"))
+  detail_rows$northwestern_source <- ifelse(detail_rows$northwestern_source == "camille_required", "Survey", ifelse(detail_rows$northwestern_source == "research_baseline", "Research baseline", "Missing"))
 
   lines <- c(
     "# Camille Decision Report",
     "",
     sprintf("Generated on %s.", format(Sys.time(), "%Y-%m-%d %H:%M:%S")),
     "",
-    "This report uses research baseline scores on research-heavy criteria. Subjective criteria only count after Camille answers them in the survey.",
+    "This report uses research baseline scores on research-heavy criteria. Subjective criteria are prefilled in the survey so Camille can review them quickly and edit them if needed.",
     "",
     "## Current Comparison",
     ""
@@ -52,7 +52,7 @@ write_report <- function(root, output_path, state = NULL) {
 
     lines <- c(
       lines,
-      sprintf("Current leader under the balanced scenario: **%s**.", winner),
+      sprintf("Current recommendation: **%s** has the higher weighted overall score.", winner),
       "",
       score_text,
       "",
@@ -86,14 +86,14 @@ write_report <- function(root, output_path, state = NULL) {
     }
   }
 
-  lines <- c(lines, "## Camille Answers On Subjective Criteria", "")
+  lines <- c(lines, "## Survey Scores On Subjective Criteria", "")
   if (nrow(camille_rows) == 0) {
-    lines <- c(lines, "No Camille-required subjective answers have been entered yet.", "")
+    lines <- c(lines, "No subjective survey scores have been stored yet.", "")
   } else {
     for (i in seq_len(nrow(camille_rows))) {
       row <- camille_rows[i, ]
       note_text <- if (nzchar(row$user_note)) paste0(" Note: ", row$user_note) else ""
-      lines <- c(lines, sprintf("- %s: %s answered as %.1f.%s", row$school, row$label, row$user_score, note_text))
+      lines <- c(lines, sprintf("- %s: %s scored %.1f in the survey.%s", row$school, row$label, row$user_score, note_text))
     }
     lines <- c(lines, "")
   }
