@@ -1,0 +1,64 @@
+criterion_id,category,label,description,default_weight,dealbreaker_allowed,higher_is_better,objective,active
+research_fit_primary,academic_fit,Primary research fit,How well the program fits her main research agenda,5,TRUE,TRUE,FALSE,TRUE
+research_fit_secondary,academic_fit,Secondary research fit,How well the program supports adjacent interests if her agenda evolves,3,TRUE,TRUE,FALSE,TRUE
+advisor_fit_best,academic_fit,Best advisor fit,How good the strongest possible advising relationship looks,5,TRUE,TRUE,FALSE,TRUE
+advisor_fit_second,academic_fit,Second advisor fit,Whether there is a strong backup adviser if the first match changes,4,TRUE,TRUE,FALSE,TRUE
+advisor_depth,academic_fit,Advisor bench depth,How many faculty could seriously advise her in the area,5,TRUE,TRUE,FALSE,TRUE
+advisor_personality,academic_fit,Advisor personality fit,Whether likely advisers feel constructive rather than draining,4,TRUE,TRUE,FALSE,TRUE
+mentoring_reputation,academic_fit,Mentoring reputation,How well faculty are known to support graduate students,4,TRUE,TRUE,FALSE,TRUE
+faculty_enthusiasm_for_camille,academic_fit,Faculty enthusiasm for Camille,Whether the department seems excited to invest in her specifically,4,TRUE,TRUE,FALSE,TRUE
+intellectual_community,academic_fit,Intellectual community,Strength of seminars conversations and scholarly community,4,TRUE,TRUE,FALSE,TRUE
+methods_training,academic_fit,Methods training,Fit between the program and her preferred methods training needs,4,TRUE,TRUE,FALSE,TRUE
+interdisciplinary_opportunities,academic_fit,Interdisciplinary opportunities,Ability to draw on other departments centers and workshops,3,FALSE,TRUE,FALSE,TRUE
+research_collaboration,academic_fit,Research collaboration,Availability of opportunities to coauthor or join faculty projects,3,FALSE,TRUE,FALSE,TRUE
+flexibility_to_evolve_topic,academic_fit,Topic flexibility,How easy it would be to change topic or emphasis later,4,TRUE,TRUE,FALSE,TRUE
+dissertation_support,academic_fit,Dissertation support,Expected quality of support in the dissertation phase,5,TRUE,TRUE,FALSE,TRUE
+teaching_training,academic_fit,Teaching training,Quality of training for becoming a capable teacher,3,FALSE,TRUE,FALSE,TRUE
+labor_vs_training_balance,academic_fit,Training over labor extraction,Whether graduate work feels like training rather than cheap labor,4,TRUE,TRUE,FALSE,TRUE
+annual_stipend_value,funding_material,Annual stipend value,How strong the guaranteed annual pay is in real terms,5,TRUE,TRUE,TRUE,TRUE
+funding_guarantee_years,funding_material,Funding guarantee length,How secure multi-year funding looks,5,TRUE,TRUE,TRUE,TRUE
+fellowship_generosity,funding_material,Fellowship generosity,How much funding arrives without service obligations,4,FALSE,TRUE,TRUE,TRUE
+additional_fellowship_support,funding_material,Additional fellowship support,One time or extra awards that improve financial slack,2,FALSE,TRUE,TRUE,TRUE
+teaching_load_sustainability,funding_material,Teaching load sustainability,Whether the required teaching load looks manageable,4,TRUE,TRUE,FALSE,TRUE
+summer_funding,funding_material,Summer funding,Whether summer pay or funding is reliably available,3,FALSE,TRUE,TRUE,TRUE
+travel_research_funding,funding_material,Travel and research funding,Support for conferences fieldwork archives and data needs,3,FALSE,TRUE,FALSE,TRUE
+health_insurance,funding_material,Health insurance,Quality and affordability of the health insurance package,4,TRUE,TRUE,TRUE,TRUE
+housing_cost,funding_material,Housing affordability,How affordable housing will feel on the stipend,5,TRUE,TRUE,TRUE,TRUE
+housing_security,funding_material,Housing security,How predictable and stable housing access looks,4,TRUE,TRUE,TRUE,TRUE
+overall_cost_of_living,funding_material,Overall cost of living,How far the stipend goes after everyday expenses,5,TRUE,TRUE,TRUE,TRUE
+ability_to_save,funding_material,Ability to save,Whether she can build a cushion instead of living at the edge,4,FALSE,TRUE,FALSE,TRUE
+financial_stress_risk,funding_material,Low financial stress risk,Likelihood that money worries stay manageable,5,TRUE,TRUE,FALSE,TRUE
+administrative_clarity,funding_material,Administrative clarity,How clearly funding rules deadlines and logistics are communicated,3,FALSE,TRUE,FALSE,TRUE
+general_stress_culture,environment_mental_health,Low stress culture,Whether day to day life feels sustainable rather than constantly intense,5,TRUE,TRUE,FALSE,TRUE
+anxiety_fit,environment_mental_health,Fit for anxiety management,Whether the environment helps rather than worsens anxiety,5,TRUE,TRUE,FALSE,TRUE
+workaholism_sustainability,environment_mental_health,Fit for workaholism management,Whether the culture limits toxic overwork rather than rewarding it,5,TRUE,TRUE,FALSE,TRUE
+routine_stability,environment_mental_health,Routine stability,How easy it seems to build stable habits sleep and daily structure,4,FALSE,TRUE,FALSE,TRUE
+weather_and_daily_quality,environment_mental_health,Weather and daily quality,How much the location improves ordinary life and energy,2,FALSE,TRUE,FALSE,TRUE
+access_to_nature,environment_mental_health,Access to nature,Availability of outdoor decompression and space,2,FALSE,TRUE,FALSE,TRUE
+access_to_mental_health_support,environment_mental_health,Mental health support,Quality and accessibility of counseling or related support,4,TRUE,TRUE,FALSE,TRUE
+overall_emotional_sustainability,environment_mental_health,Overall emotional sustainability,Whether she can imagine thriving there for five to seven years,5,TRUE,TRUE,FALSE,TRUE
+faculty_warmth,department_culture,Faculty warmth,Whether faculty interactions feel human encouraging and respectful,4,TRUE,TRUE,FALSE,TRUE
+cohort_collegiality,department_culture,Cohort collegiality,Whether graduate students seem mutually supportive rather than cutthroat,4,TRUE,TRUE,FALSE,TRUE
+respect_and_belonging,department_culture,Respect and belonging,Whether she is likely to feel valued and included in the department,5,TRUE,TRUE,FALSE,TRUE
+intimidation_vs_support,department_culture,Support over intimidation,Whether the atmosphere feels supportive rather than intimidating,5,TRUE,TRUE,FALSE,TRUE
+transparency_of_expectations,department_culture,Transparency of expectations,How clearly milestones standards and norms are communicated,4,FALSE,TRUE,FALSE,TRUE
+administrative_competence,department_culture,Administrative competence,How functional the department appears on routine student matters,3,FALSE,TRUE,FALSE,TRUE
+toxic_competitiveness_risk,department_culture,Low toxic competitiveness risk,How unlikely it is that status games dominate the culture,5,TRUE,TRUE,FALSE,TRUE
+ability_to_ask_for_help,department_culture,Ability to ask for help,Whether needing help seems acceptable and safe,4,TRUE,TRUE,FALSE,TRUE
+placement_strength,career_outcomes,Placement strength,How well graduates land strong jobs overall,5,TRUE,TRUE,FALSE,TRUE
+prestige_brand,career_outcomes,Prestige and brand,How much outside prestige may help on the job market,4,FALSE,TRUE,FALSE,TRUE
+niche_reputation,career_outcomes,Niche reputation,Reputation in her specific subfield rather than only overall prestige,4,TRUE,TRUE,FALSE,TRUE
+letter_writer_strength,career_outcomes,Letter writer strength,Likelihood of getting strong letters from visible faculty,4,TRUE,TRUE,FALSE,TRUE
+publication_support,career_outcomes,Publication support,How strongly the program helps students publish early,4,FALSE,TRUE,FALSE,TRUE
+external_network_access,career_outcomes,External network access,Access to conferences workshops and leading scholars,4,FALSE,TRUE,FALSE,TRUE
+career_optionality,career_outcomes,Career optionality,How well the training supports both academic and nonacademic exits,3,FALSE,TRUE,FALSE,TRUE
+distance_to_support_network,personal_life,Support network access,Ease of staying connected to important people,3,FALSE,TRUE,FALSE,TRUE
+lifestyle_fit,personal_life,Lifestyle fit,How well the city or town fits the life she actually wants,4,FALSE,TRUE,FALSE,TRUE
+ease_building_community,personal_life,Ease of building community,How easy it seems to build friendships and life outside the department,3,FALSE,TRUE,FALSE,TRUE
+overall_livability,personal_life,Overall livability,Whether daily life there feels pleasant and workable,4,TRUE,TRUE,FALSE,TRUE
+known_vs_unknown,decision_risk,Information certainty,How much solid information she has relative to guesswork,4,FALSE,TRUE,FALSE,TRUE
+reliance_on_single_professor,decision_risk,Advisor redundancy,Whether success depends on one professor rather than several viable mentors,5,TRUE,TRUE,FALSE,TRUE
+confidence_against_regret,decision_risk,Confidence against regret,How likely she is to feel at peace with the choice two years from now,5,TRUE,TRUE,FALSE,TRUE
+late_offer_process_confidence,decision_risk,Confidence in admissions process,Whether the admissions process itself increases trust in the option,3,FALSE,TRUE,FALSE,TRUE
+switching_cost_acceptance_status,decision_risk,Administrative switching ease,How easy it is to change plans without significant fallout,2,FALSE,TRUE,FALSE,TRUE
+decision_reversibility,decision_risk,Decision reversibility,How much room there is to recover if the choice proves wrong,2,FALSE,TRUE,FALSE,TRUE
