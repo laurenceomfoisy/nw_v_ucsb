@@ -45,14 +45,14 @@ function Hero({ coverage, subjectiveCount }) {
         <p className="eyebrow">Political Science PhD Decision Tool</p>
         <h1>Northwestern vs UCSB</h1>
         <p className="hero-copy">
-          A guided decision survey for Camille. Objective criteria are already seeded inside the app. Subjective
-          criteria are prefilled with suggested starting values, so the survey can produce a result immediately and
-          still be refined where Camille strongly disagrees.
+          A guided decision survey for Camille. High-signal objective criteria are now pre-scored from official
+          program, funding, housing, and placement information. Only the most personal or judgment-heavy dimensions
+          remain in the review section.
         </p>
       </div>
       <div className="hero-pills">
         <SummaryPill label="Ready-to-use coverage" value={`${(coverage * 100).toFixed(0)}%`} />
-        <SummaryPill label="Subjective questions prefilled" value={subjectiveCount} />
+        <SummaryPill label="Personal review questions" value={subjectiveCount} />
         <SummaryPill label="Flow" value="4 steps" />
       </div>
     </section>
@@ -206,6 +206,17 @@ function ResultsTable({ rows }) {
               <td>
                 <strong>{row.label}</strong>
                 <div className="table-subtext">{row.plainExplanation}</div>
+                {(row.ucsbNote || row.northwesternNote) && (
+                  <details className="evidence-details">
+                    <summary>Why these baseline scores?</summary>
+                    <div className="evidence-copy">
+                      <strong>UCSB:</strong> {row.ucsbNote}
+                    </div>
+                    <div className="evidence-copy">
+                      <strong>Northwestern:</strong> {row.northwesternNote}
+                    </div>
+                  </details>
+                )}
               </td>
               <td>{row.weight.toFixed(1)}</td>
               <td>{row.ucsbScore.toFixed(1)}</td>
@@ -270,7 +281,7 @@ export default function App() {
   }, [state])
 
   const subjectiveCriteria = useMemo(() => {
-    return state?.criteria.filter((criterion) => criterion.scoreOwner === 'camille_required') ?? []
+    return state?.criteria.filter((criterion) => criterion.active && criterion.reviewRequired) ?? []
   }, [state])
 
   const groupedSubjective = useMemo(() => {
@@ -282,7 +293,7 @@ export default function App() {
   }, [subjectiveCriteria])
 
   const groupedAllCriteria = useMemo(() => {
-    return (state?.criteria ?? []).reduce((accumulator, criterion) => {
+    return (state?.criteria ?? []).filter((criterion) => criterion.active).reduce((accumulator, criterion) => {
       accumulator[criterion.category] ??= []
       accumulator[criterion.category].push(criterion)
       return accumulator
@@ -424,7 +435,7 @@ export default function App() {
           <div className="intro-grid">
             <div className="info-box soft">
               <strong>Step 1</strong>
-              <p>Review the subjective criteria. If a prefilled answer looks wrong, change it.</p>
+              <p>Review only the highest-leverage personal judgments. If a suggested answer looks wrong, change it.</p>
             </div>
             <div className="info-box soft">
               <strong>Step 2</strong>
@@ -432,7 +443,7 @@ export default function App() {
             </div>
             <div className="info-box soft">
               <strong>Step 3</strong>
-              <p>Read the results sheet with the overall recommendation, drivers, and criterion details.</p>
+              <p>Read the results sheet with the overall recommendation, drivers, criterion details, and research-backed baseline scores.</p>
             </div>
           </div>
 
@@ -449,8 +460,9 @@ export default function App() {
           <div className="section-header">
             <h2>Subjective review</h2>
             <p>
-              These are the dimensions where the app should not pretend to know the full answer objectively. All of the
-              sliders already start from a suggested score, so Camille can move quickly and only change what feels off.
+              These are the dimensions where Camille's own judgment matters most. Everything here starts from a suggested
+              value, but this section is intentionally much shorter than before because the more objective criteria are now
+              pre-scored from program research.
             </p>
           </div>
 
@@ -492,7 +504,8 @@ export default function App() {
             <h2>Importance survey</h2>
             <p>
               Now ignore which school is ahead on each criterion. Answer only one question: how much should this matter
-              in Camille&apos;s overall decision?
+              in Camille&apos;s overall decision? The weighting section covers the curated active criteria only, so the model
+              is trying to avoid false precision on weakly grounded dimensions.
             </p>
           </div>
 
@@ -528,8 +541,8 @@ export default function App() {
           <div className="section-header">
             <h2>Results sheet</h2>
             <p>
-              This combines research-baseline scores for objective criteria, the survey scores for subjective criteria,
-              and the weights from the importance survey.
+              This combines official-source baselines for objective criteria, the reviewed personal judgments for the key
+              subjective criteria, and the weights from the importance survey.
             </p>
           </div>
 

@@ -491,6 +491,22 @@ td {
   font-size: 0.88rem;
 }
 
+.evidence-details {
+  margin-top: 10px;
+}
+
+.evidence-details summary {
+  cursor: pointer;
+  color: #8fd9ff;
+  font-size: 0.88rem;
+}
+
+.evidence-copy {
+  margin-top: 8px;
+  color: #c9d4f6;
+  font-size: 0.86rem;
+}
+
 .error-card {
   color: #ffd7d7;
 }

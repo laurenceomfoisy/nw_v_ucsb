@@ -1,16 +1,9 @@
 import { parseCsv } from './csv.js'
+import { ACTIVE_CRITERIA, ASSESSMENTS, REVIEW_CRITERIA } from './researchProfiles.js'
 
 export const SCHOOL_ORDER = ['UCSB', 'Northwestern']
 
-const SUBJECTIVE_CATEGORIES = new Set([
-  'academic_fit',
-  'environment_mental_health',
-  'department_culture',
-  'personal_life',
-  'decision_risk',
-])
-
-const LOCAL_STORAGE_KEY = 'nw-v-ucsb-react-survey-v1'
+const LOCAL_STORAGE_KEY = 'nw-v-ucsb-react-survey-v2'
 
 function toBoolean(value, fallback = false) {
   if (typeof value === 'boolean') {
@@ -30,8 +23,8 @@ function toNumber(value, fallback = null) {
   return Number.isNaN(parsed) ? fallback : parsed
 }
 
-function deriveScoreOwner(category) {
-  return SUBJECTIVE_CATEGORIES.has(category) ? 'camille_required' : 'research_baseline'
+function deriveScoreOwner(criterionId) {
+  return REVIEW_CRITERIA.has(criterionId) ? 'camille_required' : 'research_baseline'
 }
 
 function clamp(value, minimum, maximum) {
@@ -48,8 +41,9 @@ function normalizeCriteriaRow(row) {
     dealbreakerAllowed: toBoolean(row.dealbreaker_allowed),
     higherIsBetter: toBoolean(row.higher_is_better, true),
     objective: toBoolean(row.objective),
-    active: toBoolean(row.active, true),
-    scoreOwner: deriveScoreOwner(row.category),
+    active: ACTIVE_CRITERIA.has(row.criterion_id) && toBoolean(row.active, true),
+    reviewRequired: REVIEW_CRITERIA.has(row.criterion_id),
+    scoreOwner: deriveScoreOwner(row.criterion_id),
   }
 }
 
@@ -59,9 +53,10 @@ function buildCriteriaMap(criteria) {
 
 function normalizeOptionRow(row, criteriaMap) {
   const criterion = criteriaMap[row.criterion_id]
-  const scoreOwner = row.score_owner || criterion.scoreOwner
-  const baselineScore = toNumber(row.baseline_score, 5)
-  const baselineConfidence = toNumber(row.baseline_confidence, 0.25)
+  const assessment = ASSESSMENTS[row.criterion_id]?.[row.school] ?? null
+  const scoreOwner = criterion.scoreOwner
+  const baselineScore = assessment?.score ?? toNumber(row.baseline_score, 5)
+  const baselineConfidence = assessment?.confidence ?? toNumber(row.baseline_confidence, 0.25)
   const subjectiveDefaultConfidence = clamp(baselineConfidence || 0.55, 0.45, 0.85)
   const userScore =
     scoreOwner === 'camille_required'
@@ -73,14 +68,16 @@ function normalizeOptionRow(row, criteriaMap) {
     school: row.school,
     criterionId: row.criterion_id,
     scoreOwner,
+    reviewRequired: criterion.reviewRequired,
     scoreOrigin: row.score_origin || (scoreOwner === 'camille_required' ? 'camille_required' : 'research_baseline'),
-    knownFact: row.known_fact || '',
+    knownFact: assessment?.knownFact ?? row.known_fact ?? '',
     baselineScore,
     baselineConfidence,
     baselineNote:
-      row.baseline_note ||
-      'No criterion-specific evidence was loaded for this item yet, so the app keeps a neutral starting score that should be improved with more research later.',
-    baselineSource: row.baseline_source || 'neutral_placeholder',
+      assessment?.note ??
+      (row.baseline_note ||
+      'No criterion-specific evidence was loaded for this item yet, so the app keeps a neutral starting score that should be improved with more research later.'),
+    baselineSource: assessment?.source ?? (row.baseline_source || 'neutral_placeholder'),
     userScore,
     userConfidence:
       scoreOwner === 'camille_required'
@@ -89,7 +86,7 @@ function normalizeOptionRow(row, criteriaMap) {
     userNote:
       row.user_note ||
       (scoreOwner === 'camille_required'
-        ? 'Prefilled starting value from the tool. Camille can keep it or change it if it feels off.'
+        ? 'Suggested starting value from the tool. Camille can keep it or change it if it feels off.'
         : ''),
     camilleAnswered: scoreOwner === 'camille_required' ? true : toBoolean(row.camille_answered),
     dealbreaker: toBoolean(row.dealbreaker),

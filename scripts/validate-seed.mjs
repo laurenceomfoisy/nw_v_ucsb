@@ -25,6 +25,11 @@ if (state.options.length !== state.criteria.length * 2) {
   throw new Error('Options seed is incomplete.')
 }
 
+const activeCriteria = state.criteria.filter((criterion) => criterion.active)
+if (activeCriteria.length < 20) {
+  throw new Error('Too few active criteria remain in the curated model.')
+}
+
 if (!comparison.overall.every((row) => Number.isFinite(row.overallScore))) {
   throw new Error('Overall scores did not resolve to finite values.')
 }

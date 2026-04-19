@@ -5,8 +5,8 @@ React app for comparing Northwestern and UCSB for a Political Science PhD.
 ## Product Shape
 
 - Four-step survey flow: intro, subjective review, importance survey, results.
-- Objective criteria are already seeded from the project data.
-- Subjective criteria are prefilled with suggested starting values so the app works immediately.
+- High-signal objective criteria are pre-scored from official program, funding, housing, methods, wellness, and placement information.
+- Only a shorter set of high-leverage personal judgments remains in the review section.
 - Results include overall recommendation, category breakdown, top drivers, and a detailed criterion table.
 - Survey edits persist in the browser with `localStorage`.
 - A markdown report can be downloaded directly from the results screen.
@@ -54,9 +54,10 @@ The app reads its seed data from:
 Those CSVs provide:
 
 - the criterion list
-- the seeded objective baselines
-- the prefilled subjective starting values
+- the seeded starting option rows
 - the default weights
+
+The app also applies a curated research-baseline layer from `src/lib/researchProfiles.js`, which overrides placeholder values for the active objective criteria.
 
 ## Deployment
 

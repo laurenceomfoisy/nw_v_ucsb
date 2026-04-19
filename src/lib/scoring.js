@@ -29,6 +29,7 @@ export function resolveOption(option) {
       confidence: option.userConfidence ?? option.baselineConfidence,
       source: 'Survey',
       note: option.userNote || option.baselineNote,
+      evidenceSource: option.baselineSource,
     }
   }
 
@@ -37,14 +38,16 @@ export function resolveOption(option) {
     confidence: option.baselineConfidence,
     source: 'Research baseline',
     note: option.baselineNote,
+    evidenceSource: option.baselineSource,
   }
 }
 
 function buildDetailRows(criteria, weights, options) {
+  const activeCriteria = criteria.filter((criterion) => criterion.active)
   const optionMap = new Map(options.map((option) => [option.key, option]))
   const weightMap = new Map(weights.map((weight) => [weight.criterionId, weight.userWeight]))
 
-  return criteria.map((criterion) => {
+  return activeCriteria.map((criterion) => {
     const ucsb = resolveOption(optionMap.get(`UCSB::${criterion.criterionId}`))
     const northwestern = resolveOption(optionMap.get(`Northwestern::${criterion.criterionId}`))
     return {
@@ -59,10 +62,12 @@ function buildDetailRows(criteria, weights, options) {
       ucsbConfidence: ucsb.confidence,
       ucsbSource: ucsb.source,
       ucsbNote: ucsb.note,
+      ucsbEvidenceSource: ucsb.evidenceSource,
       northwesternScore: northwestern.score,
       northwesternConfidence: northwestern.confidence,
       northwesternSource: northwestern.source,
       northwesternNote: northwestern.note,
+      northwesternEvidenceSource: northwestern.evidenceSource,
       gap: ucsb.score - northwestern.score,
     }
   })
