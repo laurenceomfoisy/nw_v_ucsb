@@ -1,97 +1,65 @@
-# NW vs UCSB Decision Tool
+# Northwestern vs UCSB
 
-Survey-style R software to help Camille compare Northwestern and UCSB across a large decision checklist.
+React app for comparing Northwestern and UCSB for a Political Science PhD.
 
-## What it does
+## Product Shape
 
-- Seeds an extensive criteria library covering academic fit funding mental health department culture career outcomes personal life and decision risk.
-- Stores school-specific research baseline scores, notes, and seeded facts.
-- Uses a simple linear survey flow instead of multiple dashboards.
-- Prefills the more subjective criteria with suggested starting values so Camille can review them quickly instead of starting from blank sliders.
-- Lets Camille set weights through a dedicated importance survey.
-- Tracks confidence for uncertain judgments.
-- Flags low-scoring dealbreakers.
-- Generates a markdown report in `outputs/`.
+- Four-step survey flow: intro, subjective review, importance survey, results.
+- Objective criteria are already seeded from the project data.
+- Subjective criteria are prefilled with suggested starting values so the app works immediately.
+- Results include overall recommendation, category breakdown, top drivers, and a detailed criterion table.
+- Survey edits persist in the browser with `localStorage`.
+- A markdown report can be downloaded directly from the results screen.
 
-## Files
+## Development
 
-- `app.R`: Shiny app entry point.
-- `run_app.R`: simple script that launches the Shiny app.
-- `cli.R`: the original terminal workflow if you still want it later.
-- `R/data_io.R`: file loading seeding and syncing.
-- `R/prompts.R`: terminal prompts used by the optional CLI.
-- `R/scoring.R`: comparison logic and scenario weighting.
-- `R/report.R`: markdown report generation.
-- `R/shiny_app.R`: survey UI and Shiny server logic.
-- `data/criteria.csv`: exhaustive criteria list.
-- `data/scenarios.csv`: scenario multipliers.
-- `data/weights.csv`: generated user weights.
-- `data/options.csv`: research baseline scores, Camille overrides, notes, and dealbreakers.
-
-## Run the UI
-
-From the repo root run either:
+Install dependencies:
 
 ```bash
-Rscript run_app.R
+npm install
 ```
 
-or:
+Start the app locally:
 
 ```bash
-R -e "shiny::runApp()"
+npm run dev
 ```
 
-Then follow the steps in the app:
-
-- Step 1: short intro explaining the survey.
-- Step 2: Camille reviews the prefilled subjective criteria and adjusts anything that feels wrong.
-- Step 3: Camille answers the importance survey to create the weights.
-- Step 4: the app shows one detailed results sheet.
-
-From the results screen Camille can:
-
-- go back and edit answers
-- download a markdown report
-
-## Optional CLI
-
-The terminal workflow is still available in `cli.R`.
-
-Initialize or resync generated files:
+Validate the seeded data:
 
 ```bash
-Rscript cli.R init
+npm run validate
 ```
 
-Review criteria:
+Build the production site:
 
 ```bash
-Rscript cli.R review-criteria
-Rscript cli.R review-criteria academic_fit
+npm run build
 ```
 
-## Scoring approach
+Preview the production build:
 
-- Each criterion gets a weight.
-- Each school now has a research baseline score from `0` to `10` when one is available.
-- Each baseline score gets a confidence from `0` to `1`.
-- Subjective criteria are prefilled in the survey with editable starting values.
-- The comparison uses the survey score on subjective criteria and the research baseline on research-heavy criteria.
-- The importance survey creates the weights for the final calculation.
-- The tool applies a small uncertainty penalty to low-confidence scores.
-- Comparison only uses criteria scored for both schools so the result stays fair.
-- Dealbreaker warnings appear when a criterion is flagged as a dealbreaker and scored below `6`.
+```bash
+npm run preview
+```
 
-## Current limitation
+## Data
 
-- The current seeded baseline is still mostly based on the context you provided in chat rather than full external-source research across every criterion.
-- The app is now structured for that fuller research workflow, but the baseline should still be expanded and tightened over time.
+The app reads its seed data from:
 
-## Suggested workflow
+- `public/data/criteria.csv`
+- `public/data/options.csv`
+- `public/data/weights.csv`
 
-1. Run `Rscript run_app.R`.
-2. Review the prefilled subjective-score section and adjust anything that feels wrong.
-3. Complete the importance survey.
-4. Read the final results sheet.
-5. Download the markdown report if wanted.
+Those CSVs provide:
+
+- the criterion list
+- the seeded objective baselines
+- the prefilled subjective starting values
+- the default weights
+
+## Deployment
+
+GitHub Pages deployment is configured through `.github/workflows/deploy-pages.yml`.
+
+The Vite base path is set for deployment to the `nw_v_ucsb.github.io` repository under the `nw-v-ucsb` organization.

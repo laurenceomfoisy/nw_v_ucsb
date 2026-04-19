@@ -1,4 +1,6 @@
-.Rhistory
-.RData
-.Ruserdata
+node_modules/
+dist/
+.DS_Store
+coverage/
+npm-debug.log*
 outputs/*.md
