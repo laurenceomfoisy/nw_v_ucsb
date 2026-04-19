@@ -512,9 +512,15 @@ build_decision_survey_app <- function(root) {
         }
 
         if (isTRUE(options$camille_answered[rows][1])) {
-          options$user_score[options$school == "UCSB" & rows] <- ucsb_score
-          options$user_score[options$school == "Northwestern" & rows] <- nw_score
-          options$user_confidence[rows] <- confidence
+          if (!is.null(ucsb_score)) {
+            options$user_score[options$school == "UCSB" & rows] <- ucsb_score
+          }
+          if (!is.null(nw_score)) {
+            options$user_score[options$school == "Northwestern" & rows] <- nw_score
+          }
+          if (!is.null(confidence)) {
+            options$user_confidence[rows] <- confidence
+          }
         }
       }
 
