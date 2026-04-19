@@ -62,4 +62,4 @@ Those CSVs provide:
 
 GitHub Pages deployment is configured through `.github/workflows/deploy-pages.yml`.
 
-The Vite base path is set for deployment to the `nw_v_ucsb.github.io` repository under the `nw-v-ucsb` organization.
+The app is configured for deployment to the root org site at `https://nw-v-ucsb.github.io/` from the `nw-v-ucsb.github.io` repository under the `nw-v-ucsb` organization.
